@@ -22,6 +22,7 @@ $iconify->run();
  # Important Notice
  This class use php-ico class
  First you should download it from [php-ico](https://github.com/chrisbliss18/php-ico) and paste it to your home directory.
+ 
  ./php-ico-master/class-php-ico.php 
  
  # Thanks
