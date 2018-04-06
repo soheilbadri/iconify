@@ -21,5 +21,5 @@ $iconify->run();
  
  # Thanks
  
- I want to thank [chris Jean](https://github.com/chrisbliss18) for creating [php-ico](https://github.com/chrisbliss18/php-ico)
+ I want to thank [Chris Jean](https://github.com/chrisbliss18) for creating [php-ico](https://github.com/chrisbliss18/php-ico)
  I use php-ico in my class. It makes my work so simple.
