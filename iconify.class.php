@@ -1,4 +1,5 @@
-<?php 
+<?php
+set_time_limit(0);
 /*
 
 
@@ -49,7 +50,7 @@ class ICONIFY {
 		// desktop.ini & desktop.ico  => +s +h -a -r system and hidden
 		$this->setAttrib($this->_dir);
 
-		// delete png file 
+		// delete png file
 		unlink($png);
 	}
 
@@ -74,7 +75,7 @@ class ICONIFY {
 	}
 
 	// set directory attribute to +r read-only
-	// set desktop.ini and desktop.ico file attributes to +h +s -r -a 
+	// set desktop.ini and desktop.ico file attributes to +h +s -r -a
 	// hidden system file
 	function setAttrib($paths) {
 	  if(is_array($paths)) {
@@ -84,23 +85,25 @@ class ICONIFY {
 	    return;
 	  }
 	  else {
-	    $paths = $this->pathStandard($paths);
-	    $cmd = "attrib +r {$paths}";
+	    $d = $this->cmdfy($paths);
+	    $cmd = "attrib +r {$d}";
 	    exec($cmd);
 	    if(file_exists($paths.DIRECTORY_SEPARATOR."desktop.ini")) {
 	      $d = $paths.DIRECTORY_SEPARATOR."desktop.ini";
+				$d = $this->cmdfy($d);
 	      $cmd = "attrib +h +s -r -a {$d}";
 	      exec($cmd);
 	    }
 	    if(file_exists($paths.DIRECTORY_SEPARATOR."desktop.ico")) {
 	      $d = $paths.DIRECTORY_SEPARATOR."desktop.ico";
+				$d = $this->cmdfy($d);
 	      $cmd = "attrib +h +s -r -a {$d}";
-	      exec($cmd);
+				exec($cmd);
 	    }
 	  }
 	}
 
-	// remove h and s flag from desktop.ini and desktop.ico file 
+	// remove h and s flag from desktop.ini and desktop.ico file
 	// so we can change the data
 	function removeAttrib($paths) {
 	  if(is_array($paths)) {
@@ -115,11 +118,13 @@ class ICONIFY {
 	  }
 	  if(file_exists($paths.DIRECTORY_SEPARATOR."desktop.ini")) {
 	    $d = $paths.DIRECTORY_SEPARATOR."desktop.ini";
+			$d = $this->cmdfy($d);
 	    $cmd = "attrib -h -s -r -a {$d}";
-	    exec($cmd);
+			exec($cmd);
 	  }
 	  if(file_exists($paths.DIRECTORY_SEPARATOR."desktop.ico")) {
 	    $d = $paths.DIRECTORY_SEPARATOR."desktop.ico";
+			$d = $this->cmdfy($d);
 	    $cmd = "attrib -h -s -r -a {$d}";
 	    exec($cmd);
 	  }
@@ -130,7 +135,7 @@ class ICONIFY {
 	// using php-ico class created by Chris Jean
 	// you should copy the php-ico class into yor directory
 	// in the below path
-	// php-ico-master/class-php-ico.php 	
+	// php-ico-master/class-php-ico.php
 	function makeIco($img) {
 	  if(file_exists($img)) {
 	    $p = pathinfo($img);
@@ -183,15 +188,28 @@ class ICONIFY {
 	  return(false);
 	}
 
-	// to make all path standard 
+	// to make all path standard
 	// I just replace every \ windows format directory separator with /
 	// and remove the end / to be sure every directory dont has a / at the end
 	function pathStandard ($path) {
-	  str_replace("\\", "/", $path); 
-	  if ( $path[strlen($path)-1] == "/" ) {
+	  $path = str_replace("\\", DIRECTORY_SEPARATOR, $path);
+
+	  if ( $path[strlen($path)-1] == DIRECTORY_SEPARATOR ) {
 	    $path = substr($path, 0, strlen($path)-1);
 	  }
 	  return($path);
+	}
+
+	// this function gets a path and make it the way
+	// that we can send it to shell correctly
+	function cmdfy($path) {
+		$path = $this->pathStandard($path);
+		$paths = explode(DIRECTORY_SEPARATOR, $path);
+		$path = $paths[0];
+		for ($i=1; $i < count($paths); $i++) {
+			$path .= DIRECTORY_SEPARATOR.'"'.$paths[$i].'"';
+		}
+		return($path);
 	}
 
 	// Search the directory to every image file
